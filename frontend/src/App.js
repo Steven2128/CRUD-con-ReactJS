@@ -17,6 +17,7 @@ class App extends React.Component {
                 anime: '',
             },
             modal: false,
+            modalEliminar: false,
         }
     }
 
@@ -65,6 +66,22 @@ class App extends React.Component {
         })
     }
 
+    handleDelete=()=>{
+        animeService.deleteAnime(this.state.form).then(result=>{
+            this.setState({ 
+                modalEliminar: !this.state.modalEliminar,
+            });
+            this.componentDidMount();
+        });
+    }
+
+    modalEliminar=(anime)=>{
+        this.setState({ 
+            modalEliminar: !this.state.modalEliminar,
+            form: anime,
+        });
+    }
+
     render() {
         return (
             <Container>
@@ -87,16 +104,17 @@ class App extends React.Component {
                                     <td>{index + 1}</td>
                                     <td>{value.character}</td>
                                     <td>{value.anime}</td>
-                                    <td><Button color="warning" className="me-2" onClick={() =>this.handleSelect(value)}>Editar</Button><Button color="danger">Eliminar</Button></td>
+                                    <td><Button color="warning" className="me-2" onClick={() =>this.handleSelect(value)}>Editar</Button><Button color="danger" onClick={()=>this.modalEliminar(value)}>Eliminar</Button></td>
                                 </tr>
                             )
                         }
                     </tbody>
                 </Table>
 
-                <Modal isOpen={this.state.modal}>
+                <Modal isOpen={this.state.modal} >
                     <ModalHeader close={<Button className="close" onClick={this.mostrarModal}>X</Button>}>
-                        Agregar Registro
+                        { this.state.form.id === null ? 'Agregar ': 'Actualizar '}
+                        Registro {this.state.form.character}
                     </ModalHeader>
                     <ModalBody>
                         <FormGroup>
@@ -109,12 +127,27 @@ class App extends React.Component {
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="success" onClick={this.handleCreate}>Agregar</Button>
-                        <Button color="success" onClick={this.handleUpdate}>Actualizar</Button>
+                        {this.state.form.id === null
+                            ?   <Button color="success" onClick={this.handleCreate}>Agregar</Button>
+                            :   <Button color="warning" onClick={this.handleUpdate}>Actualizar</Button>
+                        }
                         <Button color="danger" onClick={this.mostrarModal}>Cancelar</Button>
                     </ModalFooter>
                 </Modal>
-
+                
+                {/*Modal Eliminar*/}
+                <Modal isOpen={this.state.modalEliminar}>
+                    <ModalHeader close={<Button className="close" onClick={this.modalEliminar}>X</Button>}>
+                        Eliminar Registro {this.state.form.character}
+                    </ModalHeader>
+                    <ModalBody>
+                        <span>¿Desea eliminar el registro: <strong>{this.state.form.character}</strong>?</span>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.handleDelete}>Eliminar</Button>
+                        <Button color="secondary" onClick={this.modalEliminar}>Cancelar</Button>
+                    </ModalFooter>
+                </Modal>
             </Container>
         )
     }

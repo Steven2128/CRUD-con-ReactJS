@@ -3,7 +3,6 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8000';
 
 export default class AnimesService{
-    constructor(){}
 
     getAnimes(){
         const url = `${API_URL}/api/animes/`;
@@ -18,5 +17,9 @@ export default class AnimesService{
     updateAnime(anime){
         const url = `${API_URL}/api/animes/${anime.id}/`;
         return axios.put(url, anime).then(response => response.data);
+    }
+    deleteAnime(anime){
+        const url = `${API_URL}/api/animes/${anime.id}/`;
+        return axios.delete(url);
     }
 }
