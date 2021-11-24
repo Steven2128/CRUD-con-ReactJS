@@ -37,7 +37,14 @@ class App extends React.Component {
     }
 
     mostrarModal = () => {
-        this.setState({ modal: !this.state.modal });
+        this.setState({ 
+            modal: !this.state.modal, 
+            form: {
+                id: null,
+                character: '',
+                anime: '',
+            },
+        });
     }
 
     handleCreate=()=>{
@@ -47,9 +54,19 @@ class App extends React.Component {
         });
     }
 
+    handleSelect(anime){
+        this.setState({modal: !this.state.modal, form: anime});
+    }
+
+    handleUpdate=()=>{
+        animeService.updateAnime(this.state.form).then(result=>{
+            this.componentDidMount();
+            this.mostrarModal();
+        })
+    }
+
     render() {
         return (
-            
             <Container>
                 <h1 className="text-center">Personajes de Animes</h1>
                 <Button color="success" onClick={this.mostrarModal}>Agregar Nuevo Personaje</Button>
@@ -70,7 +87,7 @@ class App extends React.Component {
                                     <td>{index + 1}</td>
                                     <td>{value.character}</td>
                                     <td>{value.anime}</td>
-                                    <td><Button color="warning" className="me-2">Editar</Button><Button color="danger">Eliminar</Button></td>
+                                    <td><Button color="warning" className="me-2" onClick={() =>this.handleSelect(value)}>Editar</Button><Button color="danger">Eliminar</Button></td>
                                 </tr>
                             )
                         }
@@ -84,15 +101,16 @@ class App extends React.Component {
                     <ModalBody>
                         <FormGroup>
                             <label>Personaje:</label>
-                            <input type="text" name="character" className="form-control" onChange={this.handleChange} />
+                            <input type="text" name="character" className="form-control" onChange={this.handleChange} value={this.state.form.character}/>
                         </FormGroup>
                         <FormGroup>
                             <label>Anime:</label>
-                            <input type="text" name="anime" className="form-control" onChange={this.handleChange} />
+                            <input type="text" name="anime" className="form-control" onChange={this.handleChange} value={this.state.form.anime}/>
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="success" onClick={this.handleCreate}>Agregar</Button>
+                        <Button color="success" onClick={this.handleUpdate}>Actualizar</Button>
                         <Button color="danger" onClick={this.mostrarModal}>Cancelar</Button>
                     </ModalFooter>
                 </Modal>

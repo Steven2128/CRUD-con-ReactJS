@@ -14,4 +14,9 @@ export default class AnimesService{
         const url = `${API_URL}/api/animes/`;
         return axios.post(url, anime).then(response => response.data);
     }
+
+    updateAnime(anime){
+        const url = `${API_URL}/api/animes/${anime.id}/`;
+        return axios.put(url, anime).then(response => response.data);
+    }
 }
